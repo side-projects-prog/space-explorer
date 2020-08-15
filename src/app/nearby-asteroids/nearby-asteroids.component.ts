@@ -31,6 +31,7 @@ export class NearbyAsteroidsComponent implements OnInit {
 		let description = this.getMeteorideDescription();
 		let line = this.getLine();
 		let lineDescription = this.getMissedByDescription();
+		let stars = this.getStars();
 
 		this.eventRegisterer(camera, renderer, meteoride, description, line, lineDescription);
 
@@ -43,6 +44,7 @@ export class NearbyAsteroidsComponent implements OnInit {
 		scene.add(description);
 		scene.add(line);
 		scene.add(lineDescription);
+		scene.add(stars);
 		
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
@@ -176,6 +178,37 @@ export class NearbyAsteroidsComponent implements OnInit {
 		meteorideMesh.name = 'meteoride';
 
 		return meteorideMesh;
+	}
+
+	private getStars() {
+
+		let particleGeo = new THREE.Geometry();
+		let particleMaterial = new THREE.PointsMaterial({
+			color: 'rgb(255, 255, 255)',
+			size: 0.5,
+			map: new THREE.TextureLoader().load('../../assets/particle.png'),
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+			depthWrite: false
+		});
+
+		for (let i = 0; i < 10000; i++) {
+
+			let posx = (Math.random() - 0.5) * 100;
+			let posy = (Math.random() - 0.5) * 100;
+			let posz = (Math.random() - 0.5) * 100;
+
+			let particle = new THREE.Vector3(posx, posy, posz);
+
+			particleGeo.vertices.push(particle);
+		}
+
+		let particles = new THREE.Points(
+			particleGeo, 
+			particleMaterial
+		);
+
+		return particles;
 	}
 
 	private meteorideAnimation(scene, horizontalMovement) {
